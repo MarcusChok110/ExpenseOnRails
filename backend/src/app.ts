@@ -6,10 +6,10 @@ import express from 'express';
 import helmet from 'helmet';
 import logger from 'morgan';
 import compression from 'compression';
+import mongoose from 'mongoose';
 
 // Routes
-import indexRouter from './routes/indexRouter';
-import usersRouter from './routes/usersRouter';
+import router from './routes/index';
 
 // Load .env config file contents
 dotenv.config();
@@ -18,6 +18,7 @@ dotenv.config();
 const NODE_ENV = process.env.NODE_ENV;
 const PORT = process.env.PORT || 8000;
 const origin = NODE_ENV === 'production' ? 'TODO' : 'http://localhost:3000'; // TODO: Add production URL
+const mongoDB = process.env.MONGO_DB;
 const corsOptions = {
   origin: origin,
   credentials: true,
@@ -25,6 +26,14 @@ const corsOptions = {
 
 // Create Express Application
 const app = express();
+
+// Set up MongoDB connection
+mongoose.connect(<string>mongoDB, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 // Imported Middleware
 app.use(logger('dev'));
@@ -36,8 +45,7 @@ app.use(cors(corsOptions));
 app.use(compression());
 
 // Express Router Middleware
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use(router);
 
 // Start Server
 app.listen(PORT, () => {
