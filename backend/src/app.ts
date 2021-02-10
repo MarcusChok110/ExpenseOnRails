@@ -7,6 +7,8 @@ import helmet from 'helmet';
 import logger from 'morgan';
 import compression from 'compression';
 import mongoose from 'mongoose';
+import passport from 'passport';
+import PassportConfig from './PassportConfig';
 
 // Routes
 import router from './routes/index';
@@ -18,7 +20,7 @@ dotenv.config();
 const NODE_ENV = process.env.NODE_ENV;
 const PORT = process.env.PORT || 8000;
 const origin = NODE_ENV === 'production' ? 'TODO' : 'http://localhost:3000'; // TODO: Add production URL
-const mongoDB = process.env.MONGO_DB;
+const mongoDB = process.env.MONGO_DB!;
 const corsOptions = {
   origin: origin,
   credentials: true,
@@ -28,7 +30,7 @@ const corsOptions = {
 const app = express();
 
 // Set up MongoDB connection
-mongoose.connect(<string>mongoDB, {
+mongoose.connect(mongoDB, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -43,6 +45,11 @@ app.use(cookieParser());
 app.use(helmet());
 app.use(cors(corsOptions));
 app.use(compression());
+app.use(passport.initialize());
+
+// Configure Passport
+PassportConfig.configureLocal(passport);
+PassportConfig.configureJWT(passport);
 
 // Express Router Middleware
 app.use(router);
