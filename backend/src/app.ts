@@ -8,9 +8,7 @@ import logger from 'morgan';
 import compression from 'compression';
 import mongoose from 'mongoose';
 import passport from 'passport';
-import PassportConfig from './PassportConfig';
-
-// Routes
+import passportConfig from './utils/passportConfig';
 import router from './routes/index';
 
 // Load .env config file contents
@@ -33,6 +31,7 @@ const app = express();
 mongoose.connect(mongoDB, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
+  useCreateIndex: true,
 });
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
@@ -48,8 +47,8 @@ app.use(compression());
 app.use(passport.initialize());
 
 // Configure Passport
-PassportConfig.configureLocal(passport);
-PassportConfig.configureJWT(passport);
+passportConfig.configureLocal(passport);
+passportConfig.configureJWT(passport);
 
 // Express Router Middleware
 app.use(router);
