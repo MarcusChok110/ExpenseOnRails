@@ -2,8 +2,10 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import passport from 'passport';
 import User from '../models/User';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import dotenv from 'dotenv';
+import Account from '../models/Account';
+import mongoose from 'mongoose';
 
 dotenv.config();
 
@@ -11,44 +13,82 @@ const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'test';
 
 // Register route to create new User
-router.post('/register', async (req, res, next) => {
-  try {
-    const { email, password } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 10);
+router.post('/register', (req, res, next) => {
+  const { email, password } = req.body;
+  bcrypt.hash(password, 10, (err, hashedPassword) => {
+    if (err) return next(err);
 
-    const user = new User({ email: email, password: hashedPassword });
-    const saved = await user.save();
+    User.findOne({ email: email }).then((user): any => {
+      if (user) {
+        // Make sure account doesn't already exist
+        return res.json({
+          success: false,
+          message: 'An account with that email already exists',
+          email,
+        });
+      }
 
-    if (saved === user) {
-      res.json({ message: 'Your account has been created' });
-    } else {
-      return next(saved);
-    }
-  } catch (error) {
-    return next(error);
-  }
-});
-
-// Login route to authenticate User
-router.post('/login', (req, res) => {
-  passport.authenticate('local', { session: false }, (err, user) => {
-    if (err || !user) {
-      res.status(400).json({
-        message: 'Something went wrong',
-        user: user,
+      const newUser = new User({
+        _id: new mongoose.Types.ObjectId(),
+        email: email,
+        password: hashedPassword,
       });
-    }
+      const newAccount = new Account({ _id: new mongoose.Types.ObjectId() });
 
-    req.login(user, { session: false }, (err) => {
-      if (err) return res.send(err);
+      newUser.account = newAccount._id;
+      newAccount.user = newUser._id;
 
-      const token = jwt.sign({ user }, JWT_SECRET, { expiresIn: '60m' });
-      return res.json({ token, user });
+      newUser.save((err) => {
+        if (err) {
+          return next(err);
+        }
+        newAccount.save((err) => {
+          if (err) {
+            return next(err);
+          }
+          res.json({
+            success: true,
+            message: 'Your account has been created',
+            email: newUser.email,
+            account: newAccount,
+          });
+        });
+      });
     });
   });
 });
 
+// Login route to authenticate User
+router.post('/login', (req, res) => {
+  passport.authenticate('local', { session: false }, (err, user, info): any => {
+    if (err || !user) {
+      return res.status(400).json({ success: false, ...info });
+    }
+
+    req.login(user, { session: false }, (err) => {
+      if (err) {
+        return res.send(err);
+      }
+      const token = jwt.sign({ user }, JWT_SECRET);
+      return res.json({ success: true, ...info, token });
+    });
+  })(req, res);
+});
+
 // Logout route to end user session
-router.get('/logout', (req) => req.logout());
+// TODO: Does not work
+router.get('/logout', (req, res) => {
+  req.logout();
+  res.json({ message: 'Logged out successfully' });
+});
+
+// ping route for testing token validity
+router.use(
+  '/ping',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    res.json({ message: 'Token is valid', user: req.user });
+  }
+);
 
 export default router;
