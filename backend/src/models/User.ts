@@ -7,10 +7,10 @@ import mongoose, { Schema, Document } from 'mongoose';
 import SchemaFields from './Model';
 import { AccountDoc } from './Account';
 
-interface IUser {
+export interface IUser {
   email: string;
   password: string;
-  account: AccountDoc['_id'] | AccountDoc;
+  account: AccountDoc | AccountDoc['_id'];
   firstName?: string;
   lastName?: string;
 }

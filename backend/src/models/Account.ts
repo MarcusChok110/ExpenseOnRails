@@ -7,7 +7,7 @@ import SchemaFields from './Model';
 import { TransactionDoc } from './Transaction';
 import { UserDoc } from './User';
 
-interface IAccount {
+export interface IAccount {
   categories: string[];
   balance: number;
   budget: number;
