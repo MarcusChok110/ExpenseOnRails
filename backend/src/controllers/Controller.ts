@@ -1,10 +1,14 @@
 import { Request, Response, NextFunction } from 'express';
 
 /** Type of Express middleware functions */
-type Middleware = (req: Request, res: Response, next: NextFunction) => void;
+export type Middleware = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => void;
 
 /** Interface for REST Controllers */
-interface Controller {
+interface RestController {
   /** GET /items to display a list of all items */
   index: Middleware;
 
@@ -27,4 +31,4 @@ interface Controller {
   destroy: Middleware;
 }
 
-export default Controller;
+export default RestController;
