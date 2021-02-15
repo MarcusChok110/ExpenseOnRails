@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import mongoose from 'mongoose';
 import Account from '../models/Account';
 import Transaction, {
@@ -78,15 +78,23 @@ class TransactionController implements RestController {
    * Return a single transaction from its id in the route params
    */
   async show(req: Request, res: Response) {
-    const transactionId = req.body.transaction;
+    const { _id } = req.body.transaction;
 
-    if (!req.body.transaction) {
-      return res.json(createFailure('Bad request: No Transaction Id'));
-    }
+    if (!_id) return res.json(createFailure('Bad request: No Transaction Id'));
 
-    const transaction = await Transaction.findById(transactionId).exec();
+    if (!req.user) return res.json(failures.BAD_USER);
+
+    const user = await User.findOne({ email: req.user.email }).exec();
+
+    if (!user) return res.json(failures.NO_USER);
+
+    const transaction = await Transaction.findById(_id).exec();
 
     if (!transaction) return res.json(failures.NO_TRANSACTION);
+
+    if (user.account != transaction.account) {
+      return res.json(failures.UNAUTHORIZED);
+    }
 
     return res.json(createSuccess({ transaction }));
   }
@@ -114,9 +122,7 @@ class TransactionController implements RestController {
     if (!transaction) return res.json(failures.NO_TRANSACTION);
 
     if (user.account != transaction.account) {
-      return res.json(
-        createFailure('You are unauthorized to edit this transaction')
-      );
+      return res.json(failures.UNAUTHORIZED);
     }
 
     if (amount) transaction.amount = amount;
@@ -137,7 +143,34 @@ class TransactionController implements RestController {
   /**
    * Delete a transaction from the database from its id in the route params
    */
-  async destroy(req: Request, res: Response, next: NextFunction) {}
+  async destroy(req: Request, res: Response) {
+    const { _id } = req.body.transaction;
+
+    if (!_id) return res.json(createFailure('Bad request: No Transaction Id'));
+
+    if (!req.user) return res.json(failures.BAD_USER);
+
+    const user = await User.findOne({ email: req.user.email }).exec();
+
+    if (!user) return res.json(failures.NO_USER);
+
+    const transaction = await Transaction.findById(_id).exec();
+
+    if (!transaction) return res.json(failures.NO_TRANSACTION);
+
+    if (user.account != transaction.account) {
+      return res.json(failures.UNAUTHORIZED);
+    }
+
+    try {
+      await transaction.remove();
+      return res.json(
+        createSuccess({ message: 'Transaction removed from database' })
+      );
+    } catch (error) {
+      return res.json(createFailure('Could not delete transaction', { error }));
+    }
+  }
 }
 
 export default TransactionController;
