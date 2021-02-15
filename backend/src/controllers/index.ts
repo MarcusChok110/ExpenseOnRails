@@ -68,11 +68,17 @@ export function createFailure(message: string, options?: object) {
  * Returns an object with a success property set to true
  * @param options additional JSON to be returned in response
  */
-export function createSuccess(options: object) {
-  return {
-    success: true,
-    ...options,
-  };
+export function createSuccess(options?: object) {
+  if (options) {
+    return {
+      success: true,
+      ...options,
+    };
+  } else {
+    return {
+      success: true,
+    };
+  }
 }
 
 /**
@@ -82,4 +88,6 @@ export const failures = {
   BAD_USER: createFailure('Bad request: No User'),
   NO_USER: createFailure('User not found'),
   NO_ACCOUNT: createFailure('Account not found'),
+  NO_TRANSACTION: createFailure('Transaction not found'),
+  UNAUTHORIZED: createFailure('You are unauthorized to edit this transaction'),
 };
