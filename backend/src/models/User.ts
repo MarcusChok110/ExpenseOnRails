@@ -3,9 +3,9 @@
  * Includes email, password, and (optionally), first name and last name.
  */
 
-import mongoose, { Schema, Document } from 'mongoose';
-import SchemaFields from './Model';
+import mongoose, { Document, Schema } from 'mongoose';
 import { AccountDoc } from './Account';
+import SchemaFields from './index';
 
 export interface IUser {
   email: string;

@@ -2,9 +2,9 @@
  * Model for a single expense/revenue transaction
  */
 
-import mongoose, { Schema, Document } from 'mongoose';
-import SchemaFields from './Model';
+import mongoose, { Document, Schema } from 'mongoose';
 import { AccountDoc } from './Account';
+import SchemaFields from './index';
 
 export interface ITransaction {
   account: AccountDoc['_id'] | AccountDoc;

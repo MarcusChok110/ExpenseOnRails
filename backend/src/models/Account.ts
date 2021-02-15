@@ -2,8 +2,8 @@
  * Account model for user data.
  * Contains fields such as transactions and expenses.
  */
-import mongoose, { Schema, Document } from 'mongoose';
-import SchemaFields from './Model';
+import mongoose, { Document, Schema } from 'mongoose';
+import SchemaFields from './index';
 import { TransactionDoc } from './Transaction';
 import { UserDoc } from './User';
 
