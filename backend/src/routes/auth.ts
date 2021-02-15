@@ -6,6 +6,8 @@ import bcrypt from 'bcryptjs';
 import dotenv from 'dotenv';
 import Account from '../models/Account';
 import mongoose from 'mongoose';
+import { createFailure, createSuccess, failures } from '../controllers';
+import Transaction from '../models/Transaction';
 
 dotenv.config();
 
@@ -75,12 +77,52 @@ router.post('/login', (req, res) => {
   })(req, res);
 });
 
-// Logout route to end user session
-// TODO: Does not work
-router.get('/logout', (req, res) => {
-  req.logout();
-  res.json({ message: 'Logged out successfully' });
-});
+// Delete route to delete user account
+router.delete(
+  '/delete',
+  passport.authenticate('jwt', { session: false }),
+  async (req, res) => {
+    if (!req.body)
+      return res.json(createFailure('Bad request: No email / password'));
+
+    const { email, password } = req.body;
+
+    if (!req.user || req.user.email !== email) {
+      return res.json(failures.BAD_USER);
+    }
+
+    const user = await User.findOne({ email: req.user.email }).exec();
+
+    if (!user) return res.json(failures.NO_USER);
+
+    const passwordsMatch = await bcrypt.compare(password, user.password);
+
+    if (!passwordsMatch) return res.json(failures.UNAUTHORIZED);
+
+    const account = await Account.findById(user.account).exec();
+
+    if (!account) return res.json(failures.NO_ACCOUNT);
+
+    const transactions = await Transaction.find({
+      account: account._id,
+    }).exec();
+
+    try {
+      for (const transaction of transactions) {
+        await transaction.delete();
+      }
+      await account.delete();
+      await user.delete();
+      return res.json(createSuccess({ user, account, transactions }));
+    } catch (error) {
+      return res.json(
+        createFailure('Failed to delete user / account / transactions', {
+          error,
+        })
+      );
+    }
+  }
+);
 
 // ping route for testing token validity
 router.use(
