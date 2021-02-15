@@ -78,7 +78,7 @@ class TransactionController implements RestController {
    * Return a single transaction from its id in the route params
    */
   async show(req: Request, res: Response) {
-    const { _id } = req.body.transaction;
+    const { _id } = req.params;
 
     if (!_id) return res.json(createFailure('Bad request: No Transaction Id'));
 
@@ -104,12 +104,13 @@ class TransactionController implements RestController {
    */
   async update(req: Request, res: Response) {
     const fields = req.body.transaction;
+    const { _id } = req.params;
 
     if (!fields) {
       return res.json(createFailure('Bad request: no transaction fields'));
     }
 
-    const { amount, category, date, description, title, type, _id } = fields;
+    const { amount, category, date, description, title, type } = fields;
 
     if (!req.user) return res.json(failures.BAD_USER);
 
@@ -144,7 +145,7 @@ class TransactionController implements RestController {
    * Delete a transaction from the database from its id in the route params
    */
   async destroy(req: Request, res: Response) {
-    const { _id } = req.body.transaction;
+    const { _id } = req.params;
 
     if (!_id) return res.json(createFailure('Bad request: No Transaction Id'));
 
