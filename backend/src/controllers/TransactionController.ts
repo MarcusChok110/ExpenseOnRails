@@ -66,7 +66,6 @@ class TransactionController implements RestController {
     try {
       await account.save();
       await newTransaction.save();
-
       return res.json(createSuccess({ transaction: newTransaction._id }));
     } catch (error) {
       return res.json(
@@ -88,6 +87,8 @@ class TransactionController implements RestController {
     const transaction = await Transaction.findById(transactionId).exec();
 
     if (!transaction) return res.json(createFailure('Transaction not found'));
+
+    return res.json(createSuccess({ transaction }));
   }
 
   /**
