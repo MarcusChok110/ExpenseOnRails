@@ -77,7 +77,7 @@ class TransactionController implements RestController {
   /**
    * Return a single transaction from its id in the route params
    */
-  async show(req: Request, res: Response, next: NextFunction) {
+  async show(req: Request, res: Response) {
     const transactionId = req.body.transaction;
 
     if (!req.body.transaction) {
@@ -86,7 +86,7 @@ class TransactionController implements RestController {
 
     const transaction = await Transaction.findById(transactionId).exec();
 
-    if (!transaction) return res.json(createFailure('Transaction not found'));
+    if (!transaction) return res.json(failures.NO_TRANSACTION);
 
     return res.json(createSuccess({ transaction }));
   }
@@ -94,7 +94,45 @@ class TransactionController implements RestController {
   /**
    * Update a transaction from its id in the route params
    */
-  async update(req: Request, res: Response, next: NextFunction) {}
+  async update(req: Request, res: Response) {
+    const fields = req.body.transaction;
+
+    if (!fields) {
+      return res.json(createFailure('Bad request: no transaction fields'));
+    }
+
+    const { amount, category, date, description, title, type, _id } = fields;
+
+    if (!req.user) return res.json(failures.BAD_USER);
+
+    const user = await User.findOne({ email: req.user.email }).exec();
+
+    if (!user) return res.json(failures.NO_USER);
+
+    const transaction = await Transaction.findById(_id).exec();
+
+    if (!transaction) return res.json(failures.NO_TRANSACTION);
+
+    if (user.account != transaction.account) {
+      return res.json(
+        createFailure('You are unauthorized to edit this transaction')
+      );
+    }
+
+    if (amount) transaction.amount = amount;
+    if (category) transaction.category = category;
+    if (date) transaction.date = date;
+    if (description) transaction.description = description;
+    if (title) transaction.title = title;
+    if (type) transaction.type = type;
+
+    try {
+      await transaction.save();
+      return res.json(createSuccess({ transaction }));
+    } catch (error) {
+      return res.json(createFailure('Could not save transaction', { error }));
+    }
+  }
 
   /**
    * Delete a transaction from the database from its id in the route params
