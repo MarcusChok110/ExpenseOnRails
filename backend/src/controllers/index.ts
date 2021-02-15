@@ -3,6 +3,17 @@ import TransactionController from './TransactionController';
 import AccountController from './AccountController';
 import UserController from './UserController';
 
+// export controllers
+const accountController = new AccountController();
+const userController = new UserController();
+const transactionController = new TransactionController();
+
+export const controllers = {
+  accountController,
+  userController,
+  transactionController,
+};
+
 /** Type of Express middleware functions */
 export type Middleware = (
   req: Request,
@@ -33,16 +44,6 @@ export default interface RestController {
   /** DELETE /items/:id to delete a particular item */
   destroy: Middleware;
 }
-
-const accountController = new AccountController();
-const userController = new UserController();
-const transactionController = new TransactionController();
-
-export const controllers = {
-  accountController,
-  userController,
-  transactionController,
-};
 
 /**
  * Returns an object with a success property set to false
@@ -90,4 +91,5 @@ export const failures = {
   NO_ACCOUNT: createFailure('Account not found'),
   NO_TRANSACTION: createFailure('Transaction not found'),
   UNAUTHORIZED: createFailure('You are unauthorized to edit this transaction'),
+  UNIMPLEMENTED: createFailure('Route unimplemented.'),
 };
