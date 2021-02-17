@@ -10,7 +10,7 @@ export const accountInitial: Account = {
   expenses: 0,
 };
 
-const fetchAccountById = createAsyncThunk(
+export const fetchAccountById = createAsyncThunk(
   'account/fetchAccountStatus',
   async ({ jwt, id }: { jwt: string; id: string }) => {
     const options = fetchOptions.createGet(jwt);
@@ -19,7 +19,7 @@ const fetchAccountById = createAsyncThunk(
   }
 );
 
-const saveAccountChanges = createAsyncThunk(
+export const saveAccountChanges = createAsyncThunk(
   'account/saveAccountStatus',
   async ({ jwt, id, state }: { jwt: string; id: string; state: Account }) => {
     const options = fetchOptions.createPut(jwt, { account: state });
