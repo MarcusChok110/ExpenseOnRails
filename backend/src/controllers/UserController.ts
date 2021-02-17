@@ -8,11 +8,23 @@ import RestController, {
 import bcrypt from 'bcryptjs';
 
 class UserController implements RestController {
-  /**
-   * Unused: use auth login route instead
-   */
-  index(_req: Request, res: Response) {
-    return res.json(failures.UNIMPLEMENTED);
+  async index(req: Request, res: Response) {
+    if (!req.user) return res.json(failures.BAD_USER);
+
+    const user = await User.findOne({ email: req.user.email }).exec();
+
+    if (!user) return res.json(failures.NO_USER);
+
+    return res.json(
+      createSuccess({
+        user: {
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          account: user.account,
+        },
+      })
+    );
   }
 
   /**
@@ -44,6 +56,7 @@ class UserController implements RestController {
           email: user.email,
           firstName: user.firstName,
           lastName: user.lastName,
+          account: user.account,
         },
       })
     );
