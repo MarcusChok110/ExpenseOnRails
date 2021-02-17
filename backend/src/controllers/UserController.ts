@@ -102,10 +102,14 @@ class UserController implements RestController {
       await user.save();
       return res.json(
         createSuccess({
-          email: user.email,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          passwordUpdated,
+          user: {
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            account: user.account,
+            _id: user._id,
+            passwordUpdated,
+          },
         })
       );
     } catch (error) {
