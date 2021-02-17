@@ -12,18 +12,18 @@ export const accountInitial: Account = {
 
 export const fetchAccountById = createAsyncThunk(
   'account/fetchAccountStatus',
-  async ({ jwt, id }: { jwt: string; id: string }) => {
+  async ({ jwt, _id }: { jwt: string; _id: string }) => {
     const options = fetchOptions.createGet(jwt);
-    const response = await fetch(`${API_ROUTES.ACCOUNTS}/${id}`, options);
+    const response = await fetch(`${API_ROUTES.ACCOUNTS}/${_id}`, options);
     return await response.json();
   }
 );
 
 export const saveAccountChanges = createAsyncThunk(
   'account/saveAccountStatus',
-  async ({ jwt, id, state }: { jwt: string; id: string; state: Account }) => {
+  async ({ jwt, _id, state }: { jwt: string; _id: string; state: Account }) => {
     const options = fetchOptions.createPut(jwt, { account: state });
-    const response = await fetch(`${API_ROUTES.ACCOUNTS}/${id}`, options);
+    const response = await fetch(`${API_ROUTES.ACCOUNTS}/${_id}`, options);
     return await response.json();
   }
 );
@@ -52,13 +52,23 @@ const accountSlice = createSlice({
   },
   extraReducers: {
     [fetchAccountById.fulfilled.type]: (state, { payload }) => {
-      if (!payload.success) return;
+      if (!payload.success) {
+        console.log(payload);
+        throw new Error('Error fetching account');
+      }
       const { account } = payload;
 
       if (account.categories) state.categories = account.categories;
       if (account.balance) state.balance = account.balance;
       if (account.budget) state.budget = account.budget;
       if (account.expenses) state.expenses = account.expenses;
+    },
+    [saveAccountChanges.fulfilled.type]: (_state, { payload }) => {
+      if (!payload.success) {
+        console.log(payload);
+        throw new Error('Error saving account changes');
+      }
+      return payload.account;
     },
   },
 });
