@@ -22,6 +22,7 @@ class UserController implements RestController {
           firstName: user.firstName,
           lastName: user.lastName,
           account: user.account,
+          _id: user._id,
         },
       })
     );
