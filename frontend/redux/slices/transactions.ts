@@ -20,8 +20,8 @@ export const saveTransactions = createAsyncThunk(
     const newTransactions: Transaction[] = [];
 
     for (const transaction of state) {
-      if (transaction.new) {
-        const newTransaction: Transaction = { ...transaction };
+      const newTransaction: Transaction = { ...transaction };
+      if (newTransaction.new) {
         // make POST request to save new transaction
         delete newTransaction.new;
 
@@ -35,16 +35,16 @@ export const saveTransactions = createAsyncThunk(
         newTransactions.push(newTransaction);
       } else {
         // make PUT request to save existing transaction
-        const options = fetchOptions.createPut(jwt, { transaction });
+        const options = fetchOptions.createPut(jwt, { newTransaction });
         const response = await fetch(
-          `${API_ROUTES.TRANSACTIONS}/${transaction._id}`,
+          `${API_ROUTES.TRANSACTIONS}/${newTransaction._id}`,
           options
         );
         const json = await response.json();
 
         if (!json.success) return json;
 
-        newTransactions.push(transaction);
+        newTransactions.push(newTransaction);
       }
     }
     return { success: true, transactions: newTransactions }; // return new state if no errors have occurred
@@ -79,7 +79,7 @@ const transactionsSlice = createSlice({
         throw new Error('Error fetching transactions');
       }
       return payload.transactions;
-    }, // TODO
+    },
     [saveTransactions.fulfilled.type]: (
       _state,
       {
@@ -92,10 +92,9 @@ const transactionsSlice = createSlice({
       if (!payload.success) {
         console.log(payload);
         throw new Error('Error saving transactions');
-      } else {
-        return payload.transactions;
       }
-    }, // TODO
+      return payload.transactions;
+    },
   },
 });
 
