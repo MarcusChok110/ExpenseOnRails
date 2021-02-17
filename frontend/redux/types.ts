@@ -6,6 +6,7 @@ export interface User {
   account: string;
   firstName?: string;
   lastName?: string;
+  _id: string;
 }
 
 export interface Account {
