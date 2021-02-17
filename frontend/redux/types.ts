@@ -22,4 +22,6 @@ export interface Transaction {
   description?: string;
   title: string;
   type: 'expense' | 'revenue';
+  _id: string;
+  new?: boolean;
 }
