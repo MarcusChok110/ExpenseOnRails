@@ -1,12 +1,18 @@
-import '../styles/global.css';
 import { AppProps } from 'next/app';
 import store from '../redux/store';
 import { Provider } from 'react-redux';
+import Layout from '../components/Layout';
+import { CssBaseline } from '@material-ui/core';
 
-export default function App({ Component, pageProps }: AppProps) {
+const App: React.FC<AppProps> = ({ Component, pageProps }) => {
   return (
     <Provider store={store}>
-      <Component {...pageProps} />
+      <CssBaseline />
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
     </Provider>
   );
-}
+};
+
+export default App;
