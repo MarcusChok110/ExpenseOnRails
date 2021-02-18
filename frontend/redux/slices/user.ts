@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { User } from '../types';
 import { API_ROUTES } from '../../constants/index';
 import fetchOptions from '../../utils/fetchOptions';
+import { RootState } from '../store';
 
 export const userInitial: User = {
   loggedIn: false,
@@ -73,4 +74,5 @@ const userSlice = createSlice({
   },
 });
 
+export const selectUser = (state: RootState) => state.user.present;
 export default userSlice;
