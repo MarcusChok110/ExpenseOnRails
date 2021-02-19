@@ -1,6 +1,7 @@
 import { Menu, MenuItem } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import { AccountCircle } from '@material-ui/icons';
+import Link from 'next/link';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { selectUser } from '../../../redux/slices/user';
@@ -53,7 +54,11 @@ const AccountMenu: React.FC = () => {
           </div>
         ) : (
           <div>
-            <MenuItem onClick={handleClose}>Login</MenuItem>
+            <Link passHref href="/login">
+              <MenuItem component="a" onClick={handleClose}>
+                Login
+              </MenuItem>
+            </Link>
           </div>
         )}
       </Menu>
