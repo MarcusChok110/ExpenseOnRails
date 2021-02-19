@@ -7,9 +7,17 @@ import {
   ListItemText,
   makeStyles,
 } from '@material-ui/core';
-import { Home } from '@material-ui/icons';
+import {
+  Dashboard,
+  Home,
+  Lock,
+  MonetizationOn,
+  Person,
+} from '@material-ui/icons';
 import React from 'react';
 import { drawerWidth } from '.';
+import Link from 'next/link';
+import { useRouter } from 'next/dist/client/router';
 
 const useStyles = makeStyles((theme) => ({
   toolbar: theme.mixins.toolbar,
@@ -22,8 +30,46 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+/**
+ * Interface for links in the List
+ */
+interface NavItem {
+  text: string;
+  icon: JSX.Element;
+  href: string;
+}
+
+/**
+ * Before the divider
+ */
+const navItemsBefore: NavItem[] = [
+  { text: 'Home', icon: <Home />, href: '/' },
+  { text: 'Account', icon: <Person />, href: '/account' },
+  { text: 'Transactions', icon: <MonetizationOn />, href: '/transactions' },
+  { text: 'Dashboard', icon: <Dashboard />, href: '/dashboard' },
+];
+
+/**
+ * After the divider
+ */
+const navItemsAfter: NavItem[] = [
+  { text: 'Register', icon: <Lock />, href: '/register' },
+];
+
 const SideNav: React.FC = () => {
   const classes = useStyles();
+  const router = useRouter();
+
+  const processNavItems = (items: NavItem[]) => {
+    return items.map((item) => (
+      <Link href={item.href} passHref key={item.text}>
+        <ListItem button component="a" selected={router.pathname === item.href}>
+          <ListItemIcon>{item.icon}</ListItemIcon>
+          <ListItemText>{item.text}</ListItemText>
+        </ListItem>
+      </Link>
+    ));
+  };
 
   return (
     <>
@@ -35,14 +81,9 @@ const SideNav: React.FC = () => {
       >
         <div className={classes.toolbar}></div>
         <Divider />
-        <List>
-          <ListItem button>
-            <ListItemIcon>
-              <Home />
-            </ListItemIcon>
-            <ListItemText primary={'Home'} />
-          </ListItem>
-        </List>
+        <List>{processNavItems(navItemsBefore)}</List>
+        <Divider />
+        <List>{processNavItems(navItemsAfter)}</List>
       </Drawer>
     </>
   );
