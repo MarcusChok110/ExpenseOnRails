@@ -1,13 +1,7 @@
-import {
-  AppBar,
-  Toolbar,
-  IconButton,
-  Typography,
-  makeStyles,
-} from '@material-ui/core';
+import { AppBar, Toolbar, Typography, makeStyles } from '@material-ui/core';
 import React from 'react';
-import MenuIcon from '@material-ui/icons/Menu';
 import AccountMenu from './AccountMenu';
+import { drawerWidth } from '..';
 
 const useStyles = makeStyles((theme) => ({
   menuButton: {
@@ -16,23 +10,19 @@ const useStyles = makeStyles((theme) => ({
   title: {
     flexGrow: 1,
   },
+  appBar: {
+    width: `calc(100% - ${drawerWidth}px)`,
+    marginLeft: drawerWidth,
+  },
 }));
 
 const Header: React.FC = () => {
   const classes = useStyles();
 
   return (
-    <AppBar position="static">
+    <AppBar position="fixed" className={classes.appBar}>
       <Toolbar>
-        <IconButton
-          edge="start"
-          className={classes.menuButton}
-          color="inherit"
-          aria-label="menu"
-        >
-          <MenuIcon />
-        </IconButton>
-        <Typography variant="h6" className={classes.title}>
+        <Typography variant="h5" className={classes.title}>
           Expense On Rails
         </Typography>
         <AccountMenu />
