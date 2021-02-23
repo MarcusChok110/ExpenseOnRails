@@ -6,6 +6,7 @@ const fetchOptions = {
     return {
       headers: {
         Authorization: `Bearer ${jwt}`,
+        'Content-Type': 'application/json',
       },
       credentials: 'include',
     };
@@ -15,8 +16,19 @@ const fetchOptions = {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${jwt}`,
+        'Content-Type': 'application/json',
       },
       credentials: 'include',
+      body: JSON.stringify(body),
+    };
+  },
+  createAuthPost: (body: Object): RequestInit => {
+    return {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify(body),
     };
   },
@@ -25,6 +37,7 @@ const fetchOptions = {
       method: 'PUT',
       headers: {
         Authorization: `Bearer ${jwt}`,
+        'Content-Type': 'application/json',
       },
       credentials: 'include',
       body: JSON.stringify(body),
@@ -35,6 +48,7 @@ const fetchOptions = {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${jwt}`,
+        'Content-Type': 'application/json',
       },
       credentials: 'include',
       body: JSON.stringify(body),
