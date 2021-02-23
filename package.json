@@ -1,0 +1,21 @@
+{
+  "name": "expenseonrails",
+  "version": "1.0.0",
+  "description": "Expense tracker web-application built with Next.js and Express.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "(cd frontend && npm run dev) & (cd backend && npm run dev)",
+    "start": "(cd frontend && npm start) & (cd backend && npm start)"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MarcusChok110/ExpenseOnRails.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MarcusChok110/ExpenseOnRails/issues"
+  },
+  "homepage": "https://github.com/MarcusChok110/ExpenseOnRails#readme"
+}
