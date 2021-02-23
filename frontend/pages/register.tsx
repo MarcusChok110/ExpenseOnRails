@@ -4,6 +4,7 @@ import { useRouter } from 'next/dist/client/router';
 import NextLink from 'next/link';
 import React from 'react';
 import FormOutline from '../components/Form/FormOutline';
+import LoadingCircle from '../components/Form/LoadingCircle';
 import SubmitButton from '../components/Form/SubmitButton';
 import useInput from '../components/Form/useInput';
 import useLoading from '../components/useLoading';
@@ -42,7 +43,7 @@ const Register: React.FC = () => {
     },
   };
   const [openRegistered, registeredProps, RegisteredSnackbar] = useSnackbar(
-    'Account with email already exists',
+    'An account with that email already exists',
     loginRedirect
   );
   const [openSuccess, successProps, SuccessSnackbar] = useSnackbar(
@@ -85,38 +86,41 @@ const Register: React.FC = () => {
   const [loading, doSubmit] = useLoading(handleSubmit);
 
   return (
-    <FormOutline
-      title="Create Account"
-      icon={<PersonAdd />}
-      handleSubmit={doSubmit}
-    >
-      <Grid container spacing={2}>
-        <Grid item xs={12} sm={6}>
-          <FirstNameInput {...firstNameProps} disabled={loading} />
+    <>
+      <FormOutline
+        title="Create Account"
+        icon={<PersonAdd />}
+        handleSubmit={doSubmit}
+      >
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <FirstNameInput {...firstNameProps} disabled={loading} />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <LastNameInput {...lastNameProps} disabled={loading} />
+          </Grid>
         </Grid>
-        <Grid item xs={12} sm={6}>
-          <LastNameInput {...lastNameProps} disabled={loading} />
+        <EmailInput {...emailProps} required disabled={loading} />
+        <PasswordInput {...passwordProps} required disabled={loading} />
+        <ConfirmPassInput
+          {...confirmPassProps}
+          required
+          disabled={loading}
+          helperText="Passwords must match"
+        />
+        <SubmitButton disabled={loading}>Sign Up</SubmitButton>
+        <Grid container justify="flex-end">
+          <Grid item>
+            <NextLink href="/login" passHref>
+              <Link variant="body2">Already have an account? Log in</Link>
+            </NextLink>
+          </Grid>
         </Grid>
-      </Grid>
-      <EmailInput {...emailProps} required disabled={loading} />
-      <PasswordInput {...passwordProps} required disabled={loading} />
-      <ConfirmPassInput
-        {...confirmPassProps}
-        required
-        disabled={loading}
-        helperText="Passwords must match"
-      />
-      <SubmitButton disabled={loading}>Sign Up</SubmitButton>
-      <Grid container justify="flex-end">
-        <Grid item>
-          <NextLink href="/login" passHref>
-            <Link variant="body2">Already have an account? Log in</Link>
-          </NextLink>
-        </Grid>
-      </Grid>
-      <RegisteredSnackbar {...registeredProps} />
-      <SuccessSnackbar {...successProps} />
-    </FormOutline>
+        <RegisteredSnackbar {...registeredProps} />
+        <SuccessSnackbar {...successProps} />
+      </FormOutline>
+      <LoadingCircle display={loading} />
+    </>
   );
 };
 
