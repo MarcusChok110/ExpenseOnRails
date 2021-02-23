@@ -8,9 +8,13 @@ import React, { useState } from 'react';
  */
 export default function useInput(
   label: string,
-  type: string,
-  otherProps?: TextFieldProps
-): [string, JSX.Element, React.Dispatch<React.SetStateAction<boolean>>] {
+  type: string
+): [
+  string,
+  TextFieldProps,
+  React.FC<TextFieldProps>,
+  React.Dispatch<React.SetStateAction<boolean>>
+] {
   const [value, setValue] = useState<string>('');
   const [error, setError] = useState<boolean>(false);
 
@@ -18,21 +22,37 @@ export default function useInput(
     setValue(e.target.value);
   };
 
-  return [
+  const inputProps: TextFieldProps = {
     value,
+    onChange: handleInput,
+    label,
+    type,
+    error,
+  };
+
+  return [value, inputProps, InputField, setError];
+}
+
+const InputField: React.FC<TextFieldProps> = ({
+  value,
+  onChange,
+  label,
+  type,
+  error,
+  ...otherProps
+}) => {
+  return (
     <TextField
       value={value}
-      onChange={handleInput}
+      onChange={onChange}
       variant="outlined"
       label={label}
-      required
       type={type}
       margin="normal"
       fullWidth
       error={error}
       {...otherProps}
       helperText={error && otherProps?.helperText}
-    />,
-    setError,
-  ];
-}
+    />
+  );
+};
