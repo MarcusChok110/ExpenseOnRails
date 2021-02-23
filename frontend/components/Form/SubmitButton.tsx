@@ -1,4 +1,4 @@
-import { Button, makeStyles } from '@material-ui/core';
+import { Button, ButtonProps, makeStyles } from '@material-ui/core';
 import React from 'react';
 
 const useStyles = makeStyles((theme) => ({
@@ -7,7 +7,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SubmitButton: React.FC = ({ children }) => {
+const SubmitButton: React.FC<ButtonProps> = ({ children, ...other }) => {
   const classes = useStyles();
 
   return (
@@ -17,6 +17,7 @@ const SubmitButton: React.FC = ({ children }) => {
       fullWidth
       variant="contained"
       color="primary"
+      {...other}
     >
       {children}
     </Button>
