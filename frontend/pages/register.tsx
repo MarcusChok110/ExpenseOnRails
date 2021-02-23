@@ -1,54 +1,112 @@
 import { Grid, Link } from '@material-ui/core';
 import { PersonAdd } from '@material-ui/icons';
+import { useRouter } from 'next/dist/client/router';
 import NextLink from 'next/link';
 import React from 'react';
 import FormOutline from '../components/Form/FormOutline';
 import SubmitButton from '../components/Form/SubmitButton';
 import useInput from '../components/Form/useInput';
+import useLoading from '../components/useLoading';
+import useSnackbar from '../components/useSnackbar';
+import { AUTH_ROUTES } from '../utils/constants';
+import fetchOptions from '../utils/fetchOptions';
 
 const Register: React.FC = () => {
+  // next router hook
+  const router = useRouter();
+
   // Input Elements
-  const [firstName, FirstNameInput] = useInput('First Name', 'text', {
-    required: false,
-  });
-  const [lastName, LastNameInput] = useInput('Last Name', 'text', {
-    required: false,
-  });
-  const [email, EmailInput] = useInput('Email Address', 'email');
-  const [password, PasswordInput] = useInput('Password', 'password');
-  const [confirmPassword, ConfirmPasswordInput, setError] = useInput(
+  const [firstName, firstNameProps, FirstNameInput] = useInput(
+    'First Name',
+    'text'
+  );
+  const [lastName, lastNameProps, LastNameInput] = useInput(
+    'Last Name',
+    'text'
+  );
+  const [email, emailProps, EmailInput] = useInput('Email Address', 'email');
+  const [password, passwordProps, PasswordInput] = useInput(
+    'Password',
+    'password'
+  );
+  const [confirmPass, confirmPassProps, ConfirmPassInput, setError] = useInput(
     'Confirm Password',
-    'password',
-    {
-      helperText: 'Passwords must match',
-    }
+    'password'
   );
 
-  // TODO: HANDLE SUBMIT TO ADD USER TO DATABASE
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (password !== confirmPassword) return setError(true);
-    setError(false);
+  // Snackbars for register results
+  const loginRedirect = {
+    label: 'Login',
+    onClick: () => {
+      router.push('/login');
+    },
   };
+  const [openRegistered, registeredProps, RegisteredSnackbar] = useSnackbar(
+    'Account with email already exists',
+    loginRedirect
+  );
+  const [openSuccess, successProps, SuccessSnackbar] = useSnackbar(
+    'Successfully created account',
+    loginRedirect
+  );
+
+  // Submit handler for form
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (password !== confirmPass) return setError(true);
+    setError(false);
+
+    const user = {
+      email,
+      password,
+      firstName,
+      lastName,
+    };
+
+    try {
+      const response = await fetch(
+        AUTH_ROUTES.REGISTER,
+        fetchOptions.createAuthPost(user)
+      );
+      const json = await response.json();
+
+      if (json.success) {
+        openSuccess();
+      } else {
+        if (json.message == 'An account with that email already exists') {
+          openRegistered();
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const [loading, doSubmit] = useLoading(handleSubmit);
 
   return (
     <FormOutline
       title="Create Account"
       icon={<PersonAdd />}
-      handleSubmit={handleSubmit}
+      handleSubmit={doSubmit}
     >
       <Grid container spacing={2}>
         <Grid item xs={12} sm={6}>
-          {FirstNameInput}
+          <FirstNameInput {...firstNameProps} disabled={loading} />
         </Grid>
         <Grid item xs={12} sm={6}>
-          {LastNameInput}
+          <LastNameInput {...lastNameProps} disabled={loading} />
         </Grid>
       </Grid>
-      {EmailInput}
-      {PasswordInput}
-      {ConfirmPasswordInput}
-      <SubmitButton>Sign Up</SubmitButton>
+      <EmailInput {...emailProps} required disabled={loading} />
+      <PasswordInput {...passwordProps} required disabled={loading} />
+      <ConfirmPassInput
+        {...confirmPassProps}
+        required
+        disabled={loading}
+        helperText="Passwords must match"
+      />
+      <SubmitButton disabled={loading}>Sign Up</SubmitButton>
       <Grid container justify="flex-end">
         <Grid item>
           <NextLink href="/login" passHref>
@@ -56,6 +114,8 @@ const Register: React.FC = () => {
           </NextLink>
         </Grid>
       </Grid>
+      <RegisteredSnackbar {...registeredProps} />
+      <SuccessSnackbar {...successProps} />
     </FormOutline>
   );
 };
