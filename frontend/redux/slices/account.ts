@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { API_ROUTES } from '../../constants';
+import { API_ROUTES } from '../../utils/constants';
 import fetchOptions from '../../utils/fetchOptions';
 import { RootState } from '../store';
 import { Account } from '../types';
@@ -74,5 +74,10 @@ const accountSlice = createSlice({
   },
 });
 
+export const accountActions = {
+  ...accountSlice.actions,
+  fetchAccountById,
+  saveAccountChanges,
+};
 export const selectAccount = (state: RootState) => state.account.present;
 export default accountSlice;

@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { API_ROUTES } from '../../constants';
+import { API_ROUTES } from '../../utils/constants';
 import fetchOptions from '../../utils/fetchOptions';
 import { RootState } from '../store';
 import { Transaction } from '../types';
@@ -99,6 +99,11 @@ const transactionsSlice = createSlice({
   },
 });
 
+export const transactionsActions = {
+  ...transactionsSlice.actions,
+  fetchTransactions,
+  saveTransactions,
+};
 export const selectTransactions = (state: RootState) => {
   return state.transactions.present;
 };

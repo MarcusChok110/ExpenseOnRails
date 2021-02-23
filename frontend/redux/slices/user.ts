@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { User } from '../types';
-import { API_ROUTES } from '../../constants/index';
+import { API_ROUTES } from '../../utils/constants/index';
 import fetchOptions from '../../utils/fetchOptions';
 import { RootState } from '../store';
 
@@ -11,7 +11,10 @@ export const userInitial: User = {
   _id: '',
 };
 
-export const fetchUserByJWT = createAsyncThunk(
+/**
+ * Thunk to fetch user if jwt is already in local storage
+ */
+const fetchUserByJWT = createAsyncThunk(
   'user/fetchByJWTStatus',
   async (jwt: string) => {
     const options = fetchOptions.createGet(jwt);
@@ -23,7 +26,7 @@ export const fetchUserByJWT = createAsyncThunk(
 /**
  * Thunk to save user email, first name, or last name changes
  */
-export const saveUserChanges = createAsyncThunk(
+const saveUserChanges = createAsyncThunk(
   'user/saveUserStatus',
   async ({ jwt, _id, state }: { jwt: string; _id: string; state: User }) => {
     const update = {
@@ -74,5 +77,10 @@ const userSlice = createSlice({
   },
 });
 
+export const userActions = {
+  ...userSlice.actions,
+  fetchUserByJWT,
+  saveUserChanges,
+};
 export const selectUser = (state: RootState) => state.user.present;
 export default userSlice;
