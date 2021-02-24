@@ -10,6 +10,7 @@ import mongoose from 'mongoose';
 import passport from 'passport';
 import passportConfig from './utils/passportConfig';
 import router from './routes/index';
+import './utils/typeExtensions';
 
 // Load .env config file contents
 dotenv.config();
