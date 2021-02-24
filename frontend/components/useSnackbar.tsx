@@ -32,7 +32,7 @@ type useSnackbarResult = [() => void, Props, React.FC<Props>];
  * Custom hook which returns a custom snackbar
  */
 export default function useSnackbar(
-  message: string,
+  message: React.ReactNode,
   action?: SnackbarAction
 ): useSnackbarResult {
   const [open, setOpen] = useState<boolean>(false);
@@ -54,7 +54,7 @@ export default function useSnackbar(
  */
 interface Props {
   open: boolean;
-  message: string;
+  message: React.ReactNode;
   handleClose: CloseHandler;
   action?: SnackbarAction;
 }
