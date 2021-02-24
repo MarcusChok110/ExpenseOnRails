@@ -49,8 +49,12 @@ const AccountMenu: React.FC = () => {
       >
         {user.loggedIn ? (
           <div>
-            <MenuItem onClick={handleClose}>Profile</MenuItem>
-            <MenuItem onClick={handleClose}>Logout</MenuItem>
+            <Link passHref href="/profile">
+              <MenuItem onClick={handleClose}>Profile</MenuItem>
+            </Link>
+            <MenuItem onClick={() => (window.location.href = '/')}>
+              Logout
+            </MenuItem>
           </div>
         ) : (
           <div>
