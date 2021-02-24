@@ -16,7 +16,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'test';
 
 // Register route to create new User
 router.post('/register', (req, res, next) => {
-  const { email, password } = req.body;
+  const { email, password, firstName, lastName } = req.body;
   bcrypt.hash(password, 10, (err, hashedPassword) => {
     if (err) return next(err);
 
@@ -32,9 +32,12 @@ router.post('/register', (req, res, next) => {
 
       const newUser = new User({
         _id: new mongoose.Types.ObjectId(),
-        email: email,
+        email,
         password: hashedPassword,
       });
+      if (firstName) newUser.firstName = firstName;
+      if (lastName) newUser.lastName = lastName;
+
       const newAccount = new Account({ _id: new mongoose.Types.ObjectId() });
 
       newUser.account = newAccount._id;
