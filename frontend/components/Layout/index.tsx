@@ -3,10 +3,11 @@ import Container from '@material-ui/core/Container';
 import 'fontsource-roboto';
 import Head from 'next/head';
 import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { accountActions } from '../../redux/slices/account';
 import { transactionsActions } from '../../redux/slices/transactions';
 import { selectUser, userActions } from '../../redux/slices/user';
+import { useAppDispatch } from '../../redux/store';
 import Header from './Header/index';
 import SideNav from './SideNav';
 
@@ -26,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Layout: React.FC = ({ children }) => {
   const classes = useStyles();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const user = useSelector(selectUser);
 
   // fetch user on start
