@@ -2,26 +2,18 @@ import { Grid, Link } from '@material-ui/core';
 import { PersonAdd } from '@material-ui/icons';
 import { useRouter } from 'next/dist/client/router';
 import NextLink from 'next/link';
-import React, { useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import React from 'react';
 import FormOutline from '../components/Form/FormOutline';
 import LoadingCircle from '../components/Form/LoadingCircle';
 import SubmitButton from '../components/Form/SubmitButton';
 import useInput from '../components/Form/useInput';
 import useLoading from '../components/useLoading';
 import useSnackbar from '../components/useSnackbar';
-import { selectUser } from '../redux/slices/user';
 import { AUTH_ROUTES } from '../utils/constants';
 import fetchOptions from '../utils/fetchOptions';
 
 const Register: React.FC = () => {
   const router = useRouter();
-  const user = useSelector(selectUser);
-
-  // redirect user to homepage if already logged in
-  useEffect(() => {
-    if (user.loggedIn) router.push('/');
-  }, []);
 
   // Input Elements
   const [firstName, firstNameProps, FirstNameInput] = useInput(
