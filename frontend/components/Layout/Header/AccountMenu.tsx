@@ -21,6 +21,12 @@ const AccountMenu: React.FC = () => {
     setAnchorEl(null);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('jwt');
+    window.location.href = '/';
+    handleClose();
+  };
+
   return (
     <div>
       <IconButton
@@ -52,9 +58,7 @@ const AccountMenu: React.FC = () => {
             <Link passHref href="/profile">
               <MenuItem onClick={handleClose}>Profile</MenuItem>
             </Link>
-            <MenuItem onClick={() => (window.location.href = '/')}>
-              Logout
-            </MenuItem>
+            <MenuItem onClick={handleLogout}>Logout</MenuItem>
           </div>
         ) : (
           <div>
