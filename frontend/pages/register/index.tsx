@@ -3,14 +3,14 @@ import { PersonAdd } from '@material-ui/icons';
 import { useRouter } from 'next/dist/client/router';
 import NextLink from 'next/link';
 import React from 'react';
-import FormOutline from '../components/Form/FormOutline';
-import LoadingCircle from '../components/Form/LoadingCircle';
-import SubmitButton from '../components/Form/SubmitButton';
-import useInput from '../components/Form/useInput';
-import useLoading from '../components/useLoading';
-import useSnackbar from '../components/useSnackbar';
-import { AUTH_ROUTES } from '../utils/constants';
-import fetchOptions from '../utils/fetchOptions';
+import FormOutline from '../../components/Form/FormOutline';
+import LoadingCircle from '../../components/Form/LoadingCircle';
+import SubmitButton from '../../components/Form/SubmitButton';
+import useInput from '../../components/Form/useInput';
+import useLoading from '../../components/useLoading';
+import useSnackbar from '../../components/useSnackbar';
+import { AUTH_ROUTES } from '../../utils/constants';
+import fetchOptions from '../../utils/fetchOptions';
 
 const Register: React.FC = () => {
   const router = useRouter();
