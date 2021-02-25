@@ -40,7 +40,7 @@ class AccountController implements RestController {
 
     if (!account) return res.json(failures.NO_ACCOUNT);
 
-    if (user.account != account._id) {
+    if (String(user.account) !== String(account._id)) {
       return res.json(failures.UNAUTHORIZED);
     }
 
@@ -69,7 +69,7 @@ class AccountController implements RestController {
 
     if (!account) return res.json(failures.NO_ACCOUNT);
 
-    if (user.account != account._id) {
+    if (String(user.account) !== String(account._id)) {
       return res.json(failures.UNAUTHORIZED);
     }
 
