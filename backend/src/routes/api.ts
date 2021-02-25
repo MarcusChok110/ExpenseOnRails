@@ -15,9 +15,9 @@ mapRoutes(transactionRouter, controllers.transactionController);
 
 router.use('/users', userRouter);
 
-router.use('./accounts', accountRouter);
+router.use('/accounts', accountRouter);
 
-router.use('./transactions', transactionRouter);
+router.use('/transactions', transactionRouter);
 
 export default router;
 
