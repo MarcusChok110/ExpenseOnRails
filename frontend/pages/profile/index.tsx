@@ -42,6 +42,7 @@ const Profile: React.FC = () => {
   const [firstEditMode, setFirstEditMode] = useState(false);
   const [lastEditMode, setLastEditMode] = useState(false);
   const [emailEditMode, setEmailEditMode] = useState(false);
+  const unionEditMode = firstEditMode || lastEditMode || emailEditMode;
 
   useEffect(() => {
     handleReset();
@@ -172,7 +173,7 @@ const Profile: React.FC = () => {
                   variant="contained"
                   color="primary"
                   onClick={doSave}
-                  disabled={loading}
+                  disabled={loading || unionEditMode}
                 >
                   Save
                 </Button>
