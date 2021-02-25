@@ -57,22 +57,15 @@ const userSlice = createSlice({
         console.log(payload);
         throw new Error('Error fetching user');
       }
-      const { user } = payload;
 
-      state.loggedIn = true;
-      state.email = payload.user.email;
-      state.account = payload.user.account;
-      state._id = payload.user._id;
-
-      if (user.firstName) state.firstName = user.firstName;
-      if (user.lastName) state.lastName = user.lastName;
+      return { ...state, ...payload.user, loggedIn: true };
     },
-    [saveUserChanges.fulfilled.type]: (_state, { payload }) => {
+    [saveUserChanges.fulfilled.type]: (state, { payload }) => {
       if (!payload.success) {
         console.log(payload);
         throw new Error('Error saving user changes');
       }
-      return payload.user;
+      return { ...state, ...payload.user, loggedIn: true };
     },
   },
 });
