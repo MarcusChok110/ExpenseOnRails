@@ -1,5 +1,9 @@
 import { useState } from 'react';
 
+/**
+ * Custom hook to wrap an async function and return a loading status
+ * @param action async function to be dispatched
+ */
 const useLoading = (action: (...args: any[]) => Promise<any>) => {
   const [loading, setLoading] = useState<boolean>(false);
 
