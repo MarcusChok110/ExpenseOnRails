@@ -19,10 +19,9 @@ export interface Account {
 export interface Transaction {
   amount: number;
   category: string;
-  date: Date;
-  description?: string;
+  date: string;
+  description: string;
   title: string;
   type: 'expense' | 'revenue';
   _id: string;
-  new?: boolean;
 }
