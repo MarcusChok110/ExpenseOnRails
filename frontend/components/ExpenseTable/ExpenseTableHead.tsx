@@ -1,5 +1,6 @@
 import {
   Checkbox,
+  makeStyles,
   TableCell,
   TableHead,
   TableRow,
@@ -24,6 +25,13 @@ const headCells: HeadCell[] = [
   { id: 'date', label: 'Date', numeric: false },
 ];
 
+const useStyles = makeStyles((theme) => ({
+  cell: {
+    backgroundColor: theme.palette.info.main + '26',
+    color: theme.palette.info.dark,
+  },
+}));
+
 interface Props {
   numSelected: number;
   order: Order;
@@ -37,6 +45,8 @@ interface Props {
 }
 
 const ExpenseTableHead: React.FC<Props> = (props) => {
+  const classes = useStyles();
+
   const {
     numSelected,
     onRequestSort,
@@ -55,7 +65,7 @@ const ExpenseTableHead: React.FC<Props> = (props) => {
   return (
     <TableHead>
       <TableRow>
-        <TableCell padding="checkbox">
+        <TableCell padding="checkbox" className={classes.cell}>
           <Checkbox
             checked={rowCount > 0 && numSelected === rowCount}
             onChange={onSelectedAllClick}
@@ -66,6 +76,7 @@ const ExpenseTableHead: React.FC<Props> = (props) => {
             key={headCell.id}
             align={headCell.numeric ? 'right' : 'left'}
             sortDirection={orderBy === headCell.id ? order : false}
+            className={classes.cell}
           >
             <TableSortLabel
               active={orderBy === headCell.id}
