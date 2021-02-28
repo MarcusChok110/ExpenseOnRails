@@ -26,9 +26,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 interface Props {
-  title: string;
-  icon: JSX.Element;
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  title?: string;
+  icon?: JSX.Element;
 }
 
 const FormOutline: React.FC<Props> = ({
@@ -42,8 +42,8 @@ const FormOutline: React.FC<Props> = ({
   return (
     <Container maxWidth="sm">
       <Paper className={classes.paper} elevation={3}>
-        <Avatar className={classes.avatar}>{icon}</Avatar>
-        <Typography variant="h5">{title}</Typography>
+        {icon && <Avatar className={classes.avatar}>{icon}</Avatar>}
+        {title && <Typography variant="h5">{title}</Typography>}
         <form className={classes.form} onSubmit={handleSubmit} method="post">
           {children}
         </form>
