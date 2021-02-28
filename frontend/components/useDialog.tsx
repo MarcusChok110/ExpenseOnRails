@@ -9,6 +9,7 @@ import React, { useState } from 'react';
 
 export default function useDialog(
   title: string,
+  closeButton?: boolean,
   actions?: ExpenseDialogAction[]
 ): [VoidFunction, DialogProps, React.FC<DialogProps>] {
   const [open, setOpen] = useState(false);
@@ -19,6 +20,7 @@ export default function useDialog(
     open,
     title,
     handleClose,
+    closeButton,
     actions,
   };
 
@@ -33,9 +35,9 @@ interface ExpenseDialogAction {
 interface DialogProps {
   open: boolean;
   title: string;
-  handleClose: (event: {}, reason: 'backdropClick' | 'escapeKeyDown') => void;
+  handleClose: VoidFunction;
+  closeButton?: boolean;
   actions?: ExpenseDialogAction[];
-  contentText?: string;
 }
 
 const ExpenseDialog: React.FC<DialogProps> = ({
@@ -43,21 +45,25 @@ const ExpenseDialog: React.FC<DialogProps> = ({
   title,
   handleClose,
   children,
+  closeButton,
   actions,
 }) => {
   return (
     <Dialog open={open} onClose={handleClose}>
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>{children}</DialogContent>
-      {actions && (
-        <DialogActions>
-          {actions.map((action) => (
-            <Button onClick={action.handleClick} color="primary">
-              {action.label}
-            </Button>
-          ))}
-        </DialogActions>
-      )}
+      <DialogActions>
+        {closeButton && (
+          <Button onClick={handleClose} color="primary">
+            Close
+          </Button>
+        )}
+        {actions?.map((action) => (
+          <Button onClick={action.handleClick} color="primary">
+            {action.label}
+          </Button>
+        ))}
+      </DialogActions>
     </Dialog>
   );
 };
