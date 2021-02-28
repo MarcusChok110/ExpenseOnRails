@@ -8,7 +8,7 @@ import React, { useState } from 'react';
  */
 export default function useInput(
   label: string,
-  type: string
+  type: string = 'text'
 ): [
   string,
   TextFieldProps,
