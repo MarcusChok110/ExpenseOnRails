@@ -38,6 +38,7 @@ interface DialogProps {
   handleClose: VoidFunction;
   closeButton?: boolean;
   actions?: ExpenseDialogAction[];
+  customClose?: VoidFunction;
 }
 
 const ExpenseDialog: React.FC<DialogProps> = ({
@@ -47,6 +48,7 @@ const ExpenseDialog: React.FC<DialogProps> = ({
   children,
   closeButton,
   actions,
+  customClose,
 }) => {
   return (
     <Dialog open={open} onClose={handleClose}>
@@ -54,7 +56,13 @@ const ExpenseDialog: React.FC<DialogProps> = ({
       <DialogContent>{children}</DialogContent>
       <DialogActions>
         {closeButton && (
-          <Button onClick={handleClose} color="primary">
+          <Button
+            onClick={() => {
+              handleClose();
+              customClose?.();
+            }}
+            color="primary"
+          >
             Close
           </Button>
         )}
