@@ -11,14 +11,19 @@ export default function useSelect(
   label: string,
   id: string,
   options: { value: string; label: string }[]
-): [string, Props, React.FC<Props>] {
+): [
+  string,
+  Props,
+  React.FC<Props>,
+  React.Dispatch<React.SetStateAction<string>>
+] {
   const [value, setValue] = useState('');
   const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     setValue(event.target.value as string);
   };
 
   const selectProps = { label, id, options, value, handleChange };
-  return [value, selectProps, FormSelect];
+  return [value, selectProps, FormSelect, setValue];
 }
 
 const useStyles = makeStyles((theme) => ({

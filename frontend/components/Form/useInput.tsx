@@ -13,7 +13,8 @@ export default function useInput(
   string,
   TextFieldProps,
   React.FC<TextFieldProps>,
-  React.Dispatch<React.SetStateAction<boolean>>
+  React.Dispatch<React.SetStateAction<boolean>>,
+  React.Dispatch<React.SetStateAction<string>>
 ] {
   const [value, setValue] = useState<string>('');
   const [error, setError] = useState<boolean>(false);
@@ -30,7 +31,7 @@ export default function useInput(
     error,
   };
 
-  return [value, inputProps, InputField, setError];
+  return [value, inputProps, InputField, setError, setValue];
 }
 
 const InputField: React.FC<TextFieldProps> = ({
