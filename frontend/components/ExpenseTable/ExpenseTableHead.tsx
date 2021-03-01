@@ -87,6 +87,9 @@ const ExpenseTableHead: React.FC<Props> = (props) => {
             </TableSortLabel>
           </TableCell>
         ))}
+        <TableCell className={classes.cell} align="center">
+          Edit
+        </TableCell>
       </TableRow>
     </TableHead>
   );
