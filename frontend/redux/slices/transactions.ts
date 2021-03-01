@@ -7,7 +7,7 @@ import { Transaction } from '../types';
 export const transactionsInitial: Transaction[] = [];
 
 export const fetchTransactions = createAsyncThunk(
-  'account/fetchTransactionStatus',
+  'transactions/fetchTransactionStatus',
   async ({ jwt }: { jwt: string }) => {
     const options = fetchOptions.createGet(jwt);
     const response = await fetch(`${API_ROUTES.TRANSACTIONS}`, options);
@@ -16,7 +16,7 @@ export const fetchTransactions = createAsyncThunk(
 );
 
 export const createTransaction = createAsyncThunk(
-  'account/createTransactionStatus',
+  'transactions/createTransactionStatus',
   async ({ jwt, transaction }: { jwt: string; transaction: Transaction }) => {
     const options = fetchOptions.createPost(jwt, transaction);
     const response = await fetch(`${API_ROUTES.TRANSACTIONS}`, options);
@@ -25,10 +25,22 @@ export const createTransaction = createAsyncThunk(
 );
 
 export const deleteTransaction = createAsyncThunk(
-  'account/deleteTransactionStatus',
+  'transactions/deleteTransactionStatus',
   async ({ jwt, _id }: { jwt: string; _id: string }) => {
     const options = fetchOptions.createDelete(jwt);
     const response = await fetch(`${API_ROUTES.TRANSACTIONS}/${_id}`, options);
+    return await response.json();
+  }
+);
+
+export const editTransaction = createAsyncThunk(
+  'transactions/editTransactionStatus',
+  async ({ jwt, transaction }: { jwt: string; transaction: Transaction }) => {
+    const options = fetchOptions.createPut(jwt, transaction);
+    const response = await fetch(
+      `${API_ROUTES.TRANSACTIONS}/${transaction._id}`,
+      options
+    );
     return await response.json();
   }
 );
@@ -93,6 +105,28 @@ const transactionsSlice = createSlice({
       }
       return state.filter((element) => element._id !== payload._id);
     },
+    [editTransaction.fulfilled.type]: (
+      state,
+      {
+        payload,
+      }: PayloadAction<
+        | { success: true; transaction: Transaction }
+        | { success: false; message: string; error: any }
+      >
+    ) => {
+      if (!payload.success) {
+        console.log(payload);
+        throw new Error('Error deleting transaction');
+      }
+      return state.map((element) => {
+        const { transaction } = payload;
+        if (element._id === transaction._id) {
+          return transaction;
+        } else {
+          return element;
+        }
+      });
+    },
   },
 });
 
@@ -101,6 +135,7 @@ export const transactionsActions = {
   fetchTransactions,
   createTransaction,
   deleteTransaction,
+  editTransaction,
 };
 export const selectTransactions = (state: RootState) => {
   return state.transactions.present;
