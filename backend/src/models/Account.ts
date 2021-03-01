@@ -37,11 +37,9 @@ const AccountSchemaFields: SchemaFields<IAccount> = {
   balance: { type: Number, required: true, default: 0 },
   budget: { type: Number, required: true, default: 0 },
   expenses: { type: Number, required: true, default: 0 },
-  transactions: {
-    type: [Schema.Types.ObjectId],
-    ref: 'Transaction',
-    required: true,
-  },
+  transactions: [
+    { type: Schema.Types.ObjectId, ref: 'Transaction', required: true },
+  ],
   user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
 };
 
