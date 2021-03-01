@@ -38,12 +38,14 @@ const useStyles = makeStyles((theme) => ({
 
 interface Props {
   transactions: Transaction[];
-  handleEditClick: (row: Transaction) => void;
+  handleEdit: (row: Transaction) => void;
+  handleDelete: (ids: string[]) => Promise<void>;
 }
 
 const ExpenseTable: React.FC<Props> = ({
   transactions: rows,
-  handleEditClick,
+  handleEdit,
+  handleDelete,
 }) => {
   const classes = useStyles();
   const [order, setOrder] = useState<Order>('asc');
@@ -107,7 +109,10 @@ const ExpenseTable: React.FC<Props> = ({
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <ExpenseToolbar numSelected={selected.length} />
+        <ExpenseToolbar
+          numSelected={selected.length}
+          onDelete={() => handleDelete(selected)}
+        />
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
@@ -161,7 +166,7 @@ const ExpenseTable: React.FC<Props> = ({
                       <TableCell align="center">
                         <ActionButton
                           color="primary"
-                          onClick={() => handleEditClick(row)}
+                          onClick={() => handleEdit(row)}
                         >
                           <Edit />
                         </ActionButton>

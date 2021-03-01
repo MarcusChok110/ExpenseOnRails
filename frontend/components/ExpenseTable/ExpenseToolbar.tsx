@@ -22,7 +22,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ExpenseToolbar: React.FC<{ numSelected: number }> = ({ numSelected }) => {
+interface Props {
+  numSelected: number;
+  onDelete: VoidFunction;
+}
+
+const ExpenseToolbar: React.FC<Props> = ({ numSelected, onDelete }) => {
   const classes = useStyles();
 
   return (
@@ -37,7 +42,7 @@ const ExpenseToolbar: React.FC<{ numSelected: number }> = ({ numSelected }) => {
           <Typography color="inherit" variant="subtitle1">
             {numSelected} selected
           </Typography>
-          <IconButton>
+          <IconButton onClick={onDelete}>
             <Delete />
           </IconButton>
         </>
