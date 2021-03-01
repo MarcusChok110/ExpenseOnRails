@@ -55,8 +55,10 @@ const FormSelect: React.FC<Props> = ({
     <FormControl className={classes.formControl} required={required}>
       <InputLabel id={id}>{label}</InputLabel>
       <Select labelId={id} value={value} onChange={handleChange}>
-        {options.map((option) => (
-          <MenuItem value={option.value}>{option.label}</MenuItem>
+        {options.map((option, index) => (
+          <MenuItem key={index} value={option.value}>
+            {option.label}
+          </MenuItem>
         ))}
       </Select>
     </FormControl>
