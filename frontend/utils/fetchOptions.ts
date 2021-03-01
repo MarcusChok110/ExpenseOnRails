@@ -43,7 +43,7 @@ const fetchOptions = {
       body: JSON.stringify(body),
     };
   },
-  createDelete: (jwt: string, body: Object): RequestInit => {
+  createDelete: (jwt: string): RequestInit => {
     return {
       method: 'DELETE',
       headers: {
@@ -51,7 +51,6 @@ const fetchOptions = {
         'Content-Type': 'application/json',
       },
       credentials: 'include',
-      body: JSON.stringify(body),
     };
   },
 };
