@@ -7,7 +7,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import { Add, AttachMoney, Search } from '@material-ui/icons';
-import React from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import ExpenseTable from '../../components/ExpenseTable/index';
 import Forbidden from '../../components/Forbidden';
@@ -26,6 +26,7 @@ import {
 import { selectUser } from '../../redux/slices/user';
 import { useAppDispatch } from '../../redux/store';
 import { Transaction } from '../../redux/types';
+import { dateToFormString } from '../../utils/dateToString';
 
 const useStyles = makeStyles((theme) => ({
   toolbar: {
@@ -46,6 +47,8 @@ const Transactions: React.FC = () => {
   const user = useSelector(selectUser);
   const account = useSelector(selectAccount);
   const transactions = useSelector(selectTransactions);
+
+  const [editMode, setEditMode] = useState(false);
 
   const typeOptions = [
     { value: 'expense', label: 'Expense' },
@@ -100,7 +103,9 @@ const Transactions: React.FC = () => {
   );
   const [date, dateProps, DateInput, , setDate] = useInput('Date', 'date');
 
-  const handleCreateReset = () => {
+  const [id, setId] = useState('');
+
+  const handleFormReset = () => {
     setTitle('');
     setAmount('');
     setDescription('');
@@ -109,7 +114,18 @@ const Transactions: React.FC = () => {
     setDate('');
   };
 
-  const handleEdit = (transaction: Transaction) => {};
+  const handleEdit = (transaction: Transaction) => {
+    setEditMode(true);
+    setId(transaction._id);
+    const { title, amount, description, type, category, date } = transaction;
+    setTitle(title);
+    setAmount(String(amount));
+    setDescription(description);
+    setType(type);
+    setCategory(category);
+    setDate(dateToFormString(date));
+    handleOpenDialog();
+  };
 
   const handleDelete = async (
     ids: string[],
@@ -129,9 +145,9 @@ const Transactions: React.FC = () => {
     }
   };
 
-  const handleCreateSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    handleCreateReset();
+    handleFormReset();
     handleCloseDialog();
     const jwt = localStorage.getItem('jwt');
     if (!jwt) return;
@@ -142,19 +158,30 @@ const Transactions: React.FC = () => {
       type: type as 'expense' | 'revenue',
       category,
       date,
-      _id: '',
+      _id: id,
     };
-    try {
-      await dispatch(
-        transactionsActions.createTransaction({ jwt, transaction })
-      );
-      openCreateSuccess();
-    } catch (error) {
-      console.log(error);
+    if (!editMode) {
+      try {
+        await dispatch(
+          transactionsActions.createTransaction({ jwt, transaction })
+        );
+        openCreateSuccess();
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      try {
+        await dispatch(
+          transactionsActions.editTransaction({ jwt, transaction })
+        );
+        openUpdateSuccess();
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
-  const [createLoading, doCreateSubmit] = useLoading(handleCreateSubmit);
+  const [createLoading, doSubmit] = useLoading(handleSubmit);
   const [deleteLoading, doDelete] = useLoading(handleDelete);
   const loading = createLoading || deleteLoading;
 
@@ -163,6 +190,12 @@ const Transactions: React.FC = () => {
     createSuccessProps,
     CreateSuccessSnackbar,
   ] = useSnackbar('Successfully created new transaction');
+
+  const [
+    openUpdateSuccess,
+    updateSuccessProps,
+    UpdateSuccessSnackbar,
+  ] = useSnackbar('Successfully updated transaction');
 
   const [
     openDeleteSuccess,
@@ -196,7 +229,10 @@ const Transactions: React.FC = () => {
                   color="primary"
                   variant="outlined"
                   startIcon={<Add />}
-                  onClick={() => handleOpenDialog()}
+                  onClick={() => {
+                    handleOpenDialog();
+                    setEditMode(false);
+                  }}
                 >
                   Add Transaction
                 </Button>
@@ -211,13 +247,10 @@ const Transactions: React.FC = () => {
           </Paper>
           <CreateSuccessSnackbar {...createSuccessProps} />
           <DeleteSuccessSnackbar {...deleteSuccessProps} />
+          <UpdateSuccessSnackbar {...updateSuccessProps} />
           <LoadingCircle display={loading} />
-          <ExpenseDialog {...dialogProps} customClose={handleCreateReset}>
-            <form
-              method="post"
-              className={classes.form}
-              onSubmit={doCreateSubmit}
-            >
+          <ExpenseDialog {...dialogProps} customClose={handleFormReset}>
+            <form method="post" className={classes.form} onSubmit={doSubmit}>
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
                   <TitleInput {...titleProps} required />
@@ -252,7 +285,7 @@ const Transactions: React.FC = () => {
                   />
                 </Grid>
                 <Grid item xs={12}>
-                  <SubmitButton>Submit</SubmitButton>
+                  <SubmitButton>{editMode ? 'Update' : 'Create'}</SubmitButton>
                 </Grid>
               </Grid>
             </form>
