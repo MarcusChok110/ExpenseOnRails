@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: lighten(theme.palette.secondary.light, 0.85),
   },
   title: {
-    flex: '1 1 100%',
+    flexGrow: 1,
   },
 }));
 
