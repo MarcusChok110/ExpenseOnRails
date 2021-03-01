@@ -15,40 +15,12 @@ export const fetchTransactions = createAsyncThunk(
   }
 );
 
-export const saveTransactions = createAsyncThunk(
-  'account/saveTransactionStatus',
-  async ({ jwt, state }: { jwt: string; state: Transaction[] }) => {
-    const newTransactions: Transaction[] = [];
-
-    for (const transaction of state) {
-      const newTransaction: Transaction = { ...transaction };
-      if (newTransaction.new) {
-        // make POST request to save new transaction
-        delete newTransaction.new;
-
-        const options = fetchOptions.createPost(jwt, { newTransaction });
-        const response = await fetch(`${API_ROUTES.TRANSACTIONS}`, options);
-        const json = await response.json();
-
-        if (!json.success) return json;
-
-        newTransaction._id = json.transaction; // update id returned after saving
-        newTransactions.push(newTransaction);
-      } else {
-        // make PUT request to save existing transaction
-        const options = fetchOptions.createPut(jwt, { newTransaction });
-        const response = await fetch(
-          `${API_ROUTES.TRANSACTIONS}/${newTransaction._id}`,
-          options
-        );
-        const json = await response.json();
-
-        if (!json.success) return json;
-
-        newTransactions.push(newTransaction);
-      }
-    }
-    return { success: true, transactions: newTransactions }; // return new state if no errors have occurred
+export const createTransaction = createAsyncThunk(
+  'account/createTransactionStatus',
+  async ({ jwt, transaction }: { jwt: string; transaction: Transaction }) => {
+    const options = fetchOptions.createPost(jwt, transaction);
+    const response = await fetch(`${API_ROUTES.TRANSACTIONS}`, options);
+    return await response.json();
   }
 );
 
@@ -81,20 +53,21 @@ const transactionsSlice = createSlice({
       }
       return payload.transactions;
     },
-    [saveTransactions.fulfilled.type]: (
-      _state,
+    [createTransaction.fulfilled.type]: (
+      state,
       {
         payload,
       }: PayloadAction<
-        | { success: true; transactions: Transaction[] }
+        | { success: true; transaction: any }
         | { success: false; message: string; error: any }
       >
     ) => {
       if (!payload.success) {
         console.log(payload);
-        throw new Error('Error saving transactions');
+        throw new Error('Error creating Transaction');
       }
-      return payload.transactions;
+      const { _doc } = payload.transaction;
+      return [...state, _doc];
     },
   },
 });
@@ -102,7 +75,7 @@ const transactionsSlice = createSlice({
 export const transactionsActions = {
   ...transactionsSlice.actions,
   fetchTransactions,
-  saveTransactions,
+  createTransaction,
 };
 export const selectTransactions = (state: RootState) => {
   return state.transactions.present;
