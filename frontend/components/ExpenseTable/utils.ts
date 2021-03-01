@@ -29,3 +29,7 @@ export function stableSort<T>(array: T[], comparator: (a: T, b: T) => number) {
   });
   return stabilizedThis.map((element) => element[0]);
 }
+
+export function numberToDollarString(num: number) {
+  return `${num < 0 ? '-' : ''}$${Math.abs(num).toLocaleString()}`;
+}
