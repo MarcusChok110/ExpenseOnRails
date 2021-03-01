@@ -108,6 +108,15 @@ const ExpenseTable: React.FC<Props> = ({
     <div className={classes.root}>
       <Paper className={classes.paper}>
         <ExpenseToolbar numSelected={selected.length} />
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={rows.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onChangePage={handleChangePage}
+          onChangeRowsPerPage={handleChangeRowsPerPage}
+        />
         <TableContainer>
           <Table className={classes.table}>
             <ExpenseTableHead
