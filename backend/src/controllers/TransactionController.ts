@@ -159,14 +159,14 @@ class TransactionController implements RestController {
 
     if (!transaction) return res.json(failures.NO_TRANSACTION);
 
-    if (user.account != transaction.account) {
+    if (String(user.account) !== String(transaction.account)) {
       return res.json(failures.UNAUTHORIZED);
     }
 
     try {
       await transaction.remove();
       return res.json(
-        createSuccess({ message: 'Transaction removed from database' })
+        createSuccess({ message: 'Transaction removed from database', _id })
       );
     } catch (error) {
       return res.json(createFailure('Could not delete transaction', { error }));
