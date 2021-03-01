@@ -6,6 +6,7 @@ import Transaction, {
   validateFields,
 } from '../models/Transaction';
 import User from '../models/User';
+import stringEquals from '../utils/stringEquals';
 import RestController, {
   failures,
   createFailure,
@@ -92,7 +93,7 @@ class TransactionController implements RestController {
 
     if (!transaction) return res.json(failures.NO_TRANSACTION);
 
-    if (user.account != transaction.account) {
+    if (!stringEquals(user.account, transaction.account)) {
       return res.json(failures.UNAUTHORIZED);
     }
 
@@ -122,7 +123,7 @@ class TransactionController implements RestController {
 
     if (!transaction) return res.json(failures.NO_TRANSACTION);
 
-    if (user.account != transaction.account) {
+    if (!stringEquals(user.account, transaction.account)) {
       return res.json(failures.UNAUTHORIZED);
     }
 
@@ -159,7 +160,7 @@ class TransactionController implements RestController {
 
     if (!transaction) return res.json(failures.NO_TRANSACTION);
 
-    if (String(user.account) !== String(transaction.account)) {
+    if (!stringEquals(user.account, transaction.account)) {
       return res.json(failures.UNAUTHORIZED);
     }
 

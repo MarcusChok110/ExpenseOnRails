@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import Account from '../models/Account';
 import User from '../models/User';
+import stringEquals from '../utils/stringEquals';
 import RestController, {
   createFailure,
   createSuccess,
@@ -40,7 +41,7 @@ class AccountController implements RestController {
 
     if (!account) return res.json(failures.NO_ACCOUNT);
 
-    if (String(user.account) !== String(account._id)) {
+    if (!stringEquals(user.account, account._id)) {
       return res.json(failures.UNAUTHORIZED);
     }
 
@@ -69,7 +70,7 @@ class AccountController implements RestController {
 
     if (!account) return res.json(failures.NO_ACCOUNT);
 
-    if (String(user.account) !== String(account._id)) {
+    if (!stringEquals(user.account, account._id)) {
       return res.json(failures.UNAUTHORIZED);
     }
 
