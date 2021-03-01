@@ -37,7 +37,7 @@ class TransactionController implements RestController {
    * Create a new transaction in the database
    */
   async create(req: Request, res: Response) {
-    const transFields: ITransaction = req.body.transaction;
+    const transFields: ITransaction = req.body;
 
     if (!validateFields(transFields)) {
       return res.json(
@@ -66,7 +66,7 @@ class TransactionController implements RestController {
     try {
       await account.save();
       await newTransaction.save();
-      return res.json(createSuccess({ transaction: newTransaction._id }));
+      return res.json(createSuccess({ transaction: { ...newTransaction } }));
     } catch (error) {
       return res.json(
         createFailure('Could not save account or transaction', { error })
@@ -103,7 +103,7 @@ class TransactionController implements RestController {
    * Update a transaction from its id in the route params
    */
   async update(req: Request, res: Response) {
-    const fields = req.body.transaction;
+    const fields = req.body;
     const { _id } = req.params;
 
     if (!fields) {
