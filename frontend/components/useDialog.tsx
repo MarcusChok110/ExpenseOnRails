@@ -11,7 +11,7 @@ export default function useDialog(
   title: string,
   closeButton?: boolean,
   actions?: ExpenseDialogAction[]
-): [VoidFunction, DialogProps, React.FC<DialogProps>] {
+): [VoidFunction, DialogProps, React.FC<DialogProps>, VoidFunction] {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -24,7 +24,7 @@ export default function useDialog(
     actions,
   };
 
-  return [handleOpen, dialogProps, ExpenseDialog];
+  return [handleOpen, dialogProps, ExpenseDialog, handleClose];
 }
 
 interface ExpenseDialogAction {
@@ -51,7 +51,13 @@ const ExpenseDialog: React.FC<DialogProps> = ({
   customClose,
 }) => {
   return (
-    <Dialog open={open} onClose={handleClose}>
+    <Dialog
+      open={open}
+      onClose={() => {
+        handleClose();
+        customClose?.();
+      }}
+    >
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>{children}</DialogContent>
       <DialogActions>
