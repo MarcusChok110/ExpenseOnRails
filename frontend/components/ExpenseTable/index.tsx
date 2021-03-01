@@ -9,11 +9,19 @@ import {
   TablePagination,
   TableRow,
 } from '@material-ui/core';
+import { Edit } from '@material-ui/icons';
 import React, { useState } from 'react';
 import { Transaction } from '../../redux/types';
+import dateToString from '../../utils/dateToString';
+import ActionButton from '../Form/ActionButton';
 import ExpenseTableHead from './ExpenseTableHead';
 import ExpenseToolbar from './ExpenseToolbar';
-import { getComparator, Order, stableSort } from './utils';
+import {
+  getComparator,
+  numberToDollarString,
+  Order,
+  stableSort,
+} from './utils';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -30,9 +38,13 @@ const useStyles = makeStyles((theme) => ({
 
 interface Props {
   transactions: Transaction[];
+  handleEditClick: (row: Transaction) => void;
 }
 
-const ExpenseTable: React.FC<Props> = ({ transactions: rows }) => {
+const ExpenseTable: React.FC<Props> = ({
+  transactions: rows,
+  handleEditClick,
+}) => {
   const classes = useStyles();
   const [order, setOrder] = useState<Order>('asc');
   const [orderBy, setOrderBy] = useState<keyof Transaction>('date');
@@ -52,11 +64,11 @@ const ExpenseTable: React.FC<Props> = ({ transactions: rows }) => {
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!event.target.checked) return setSelected([]);
 
-    const newSelecteds = rows.map((element) => element.title);
+    const newSelecteds = rows.map((element) => element._id);
     return setSelected(newSelecteds);
   };
 
-  const handleClick = (_event: React.MouseEvent<unknown>, name: string) => {
+  const handleSelect = (_event: React.MouseEvent<unknown>, name: string) => {
     const selectedIndex = selected.indexOf(name);
     let newSelected: string[] = [];
 
@@ -110,28 +122,41 @@ const ExpenseTable: React.FC<Props> = ({ transactions: rows }) => {
               {stableSort(rows, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
-                  const isItemSelected = isSelected(row.title);
+                  const isItemSelected = isSelected(row._id);
 
                   return (
                     <TableRow
-                      hover
-                      onClick={(event) => handleClick(event, row.title)}
                       role="checkbox"
                       tabIndex={-1}
                       key={row.title}
                       selected={isItemSelected}
                     >
                       <TableCell padding="checkbox">
-                        <Checkbox checked={isItemSelected} />
+                        <Checkbox
+                          checked={isItemSelected}
+                          onClick={(event) => handleSelect(event, row._id)}
+                        />
                       </TableCell>
-                      <TableCell component="th" scope="row" padding="none">
+                      <TableCell component="th" scope="row">
                         {row.title}
                       </TableCell>
-                      <TableCell align="right">{row.amount}</TableCell>
-                      <TableCell align="right">{row.description}</TableCell>
-                      <TableCell align="right">{row.type}</TableCell>
-                      <TableCell align="right">{row.category}</TableCell>
-                      <TableCell align="right">{row.date}</TableCell>
+                      <TableCell align="right">
+                        {numberToDollarString(row.amount)}
+                      </TableCell>
+                      <TableCell align="left">{row.description}</TableCell>
+                      <TableCell align="left">{row.type}</TableCell>
+                      <TableCell align="left">{row.category}</TableCell>
+                      <TableCell align="left">
+                        {dateToString(row.date)}
+                      </TableCell>
+                      <TableCell align="center">
+                        <ActionButton
+                          color="primary"
+                          onClick={() => handleEditClick(row)}
+                        >
+                          <Edit />
+                        </ActionButton>
+                      </TableCell>
                     </TableRow>
                   );
                 })}
