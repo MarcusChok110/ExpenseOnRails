@@ -20,12 +20,14 @@ export interface ITransaction {
  * Validates all fields except account (added later) and description (optional)
  */
 export const validateFields = (transaction: ITransaction): boolean => {
+  const isNullish = (value: any) => value === null || value === undefined;
+  const { amount, category, date, title, type } = transaction;
   return (
-    !!transaction.amount &&
-    !!transaction.category &&
-    !!transaction.date &&
-    !!transaction.title &&
-    !!transaction.type
+    !isNullish(amount) &&
+    !isNullish(category) &&
+    !isNullish(date) &&
+    !isNullish(title) &&
+    !isNullish(type)
   );
 };
 
