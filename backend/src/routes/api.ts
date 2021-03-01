@@ -33,5 +33,5 @@ function mapRoutes(router: express.Router, controller: RestController): void {
   router.post('/', controller.create);
   router.get('/:_id', controller.show);
   router.put('/:_id', controller.update);
-  router.delete('/_id', controller.destroy);
+  router.delete('/:_id', controller.destroy);
 }
