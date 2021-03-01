@@ -39,7 +39,10 @@ const useStyles = makeStyles((theme) => ({
 interface Props {
   transactions: Transaction[];
   handleEdit: (row: Transaction) => void;
-  handleDelete: (ids: string[]) => Promise<void>;
+  handleDelete: (
+    ids: string[],
+    setSelected: React.Dispatch<React.SetStateAction<string[]>>
+  ) => Promise<void>;
 }
 
 const ExpenseTable: React.FC<Props> = ({
@@ -111,7 +114,7 @@ const ExpenseTable: React.FC<Props> = ({
       <Paper className={classes.paper}>
         <ExpenseToolbar
           numSelected={selected.length}
-          onDelete={() => handleDelete(selected)}
+          onDelete={() => handleDelete(selected, setSelected)}
         />
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
