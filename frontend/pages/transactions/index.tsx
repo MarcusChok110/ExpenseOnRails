@@ -109,6 +109,26 @@ const Transactions: React.FC = () => {
     setDate('');
   };
 
+  const handleEdit = (transaction: Transaction) => {};
+
+  const handleDelete = async (
+    ids: string[],
+    setSelected: React.Dispatch<React.SetStateAction<string[]>>
+  ) => {
+    const jwt = localStorage.getItem('jwt');
+    if (!jwt) return;
+
+    try {
+      for (const _id of ids) {
+        await dispatch(transactionsActions.deleteTransaction({ jwt, _id }));
+      }
+      setSelected([]);
+      openDeleteSuccess();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const handleCreateSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     handleCreateReset();
@@ -134,14 +154,21 @@ const Transactions: React.FC = () => {
     }
   };
 
-  const [submitLoading, doCreateSubmit] = useLoading(handleCreateSubmit);
-  const loading = submitLoading;
+  const [createLoading, doCreateSubmit] = useLoading(handleCreateSubmit);
+  const [deleteLoading, doDelete] = useLoading(handleDelete);
+  const loading = createLoading || deleteLoading;
 
   const [
     openCreateSuccess,
     createSuccessProps,
     CreateSuccessSnackbar,
   ] = useSnackbar('Successfully created new transaction');
+
+  const [
+    openDeleteSuccess,
+    deleteSuccessProps,
+    DeleteSuccessSnackbar,
+  ] = useSnackbar('Successfully deleted transaction(s)');
 
   return (
     <>
@@ -176,9 +203,14 @@ const Transactions: React.FC = () => {
               </Grid>
             </Grid>
             <div className={classes.toolbar}></div>
-            <ExpenseTable transactions={filteredTransactions} />
+            <ExpenseTable
+              transactions={filteredTransactions}
+              handleEdit={handleEdit}
+              handleDelete={doDelete}
+            />
           </Paper>
           <CreateSuccessSnackbar {...createSuccessProps} />
+          <DeleteSuccessSnackbar {...deleteSuccessProps} />
           <LoadingCircle display={loading} />
           <ExpenseDialog {...dialogProps} customClose={handleCreateReset}>
             <form
