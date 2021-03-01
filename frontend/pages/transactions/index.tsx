@@ -11,13 +11,21 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import ExpenseTable from '../../components/ExpenseTable/index';
 import Forbidden from '../../components/Forbidden';
+import LoadingCircle from '../../components/Form/LoadingCircle';
 import SubmitButton from '../../components/Form/SubmitButton';
 import useInput from '../../components/Form/useInput';
 import useSelect from '../../components/Form/useSelect';
 import useDialog from '../../components/useDialog';
+import useLoading from '../../components/useLoading';
+import useSnackbar from '../../components/useSnackbar';
 import { selectAccount } from '../../redux/slices/account';
-import { selectTransactions } from '../../redux/slices/transactions';
+import {
+  selectTransactions,
+  transactionsActions,
+} from '../../redux/slices/transactions';
 import { selectUser } from '../../redux/slices/user';
+import { useAppDispatch } from '../../redux/store';
+import { Transaction } from '../../redux/types';
 
 const useStyles = makeStyles((theme) => ({
   toolbar: {
@@ -34,12 +42,10 @@ const useStyles = makeStyles((theme) => ({
 
 const Transactions: React.FC = () => {
   const classes = useStyles();
+  const dispatch = useAppDispatch();
   const user = useSelector(selectUser);
   const account = useSelector(selectAccount);
   const transactions = useSelector(selectTransactions);
-  const filteredTransactions = transactions.filter((transaction) => {
-    return transaction.title.includes(search);
-  });
 
   const typeOptions = [
     { value: 'expense', label: 'Expense' },
@@ -56,10 +62,20 @@ const Transactions: React.FC = () => {
     'text'
   );
 
-  const [handleOpenDialog, dialogProps, ExpenseDialog] = useDialog(
-    'Create New Transaction',
-    true
-  );
+  const filteredTransactions = transactions.filter((transaction) => {
+    return (
+      transaction.title.includes(search) ||
+      transaction.description.includes(search) ||
+      transaction.amount.toString().includes(search)
+    );
+  });
+
+  const [
+    handleOpenDialog,
+    dialogProps,
+    ExpenseDialog,
+    handleCloseDialog,
+  ] = useDialog('Create New Transaction', true);
   const [title, titleProps, TitleInput, , setTitle] = useInput('Name');
   const [amount, amountProps, AmountInput, , setAmount] = useInput(
     'Amount',
@@ -84,7 +100,7 @@ const Transactions: React.FC = () => {
   );
   const [date, dateProps, DateInput, , setDate] = useInput('Date', 'date');
 
-  const handleReset = () => {
+  const handleCreateReset = () => {
     setTitle('');
     setAmount('');
     setDescription('');
@@ -93,10 +109,39 @@ const Transactions: React.FC = () => {
     setDate('');
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleCreateSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log({ title, amount, description, type, category, date });
+    handleCreateReset();
+    handleCloseDialog();
+    const jwt = localStorage.getItem('jwt');
+    if (!jwt) return;
+    const transaction: Transaction = {
+      title,
+      amount: Number(amount),
+      description,
+      type: type as 'expense' | 'revenue',
+      category,
+      date,
+      _id: '',
+    };
+    try {
+      await dispatch(
+        transactionsActions.createTransaction({ jwt, transaction })
+      );
+      openCreateSuccess();
+    } catch (error) {
+      console.log(error);
+    }
   };
+
+  const [submitLoading, doCreateSubmit] = useLoading(handleCreateSubmit);
+  const loading = submitLoading;
+
+  const [
+    openCreateSuccess,
+    createSuccessProps,
+    CreateSuccessSnackbar,
+  ] = useSnackbar('Successfully created new transaction');
 
   return (
     <>
@@ -133,11 +178,13 @@ const Transactions: React.FC = () => {
             <div className={classes.toolbar}></div>
             <ExpenseTable transactions={filteredTransactions} />
           </Paper>
-          <ExpenseDialog {...dialogProps} customClose={handleReset}>
+          <CreateSuccessSnackbar {...createSuccessProps} />
+          <LoadingCircle display={loading} />
+          <ExpenseDialog {...dialogProps} customClose={handleCreateReset}>
             <form
               method="post"
               className={classes.form}
-              onSubmit={handleSubmit}
+              onSubmit={doCreateSubmit}
             >
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
