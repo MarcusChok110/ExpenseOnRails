@@ -65,3 +65,4 @@ bin/
 
 # misc
 .DS_STORE
+.idea/
