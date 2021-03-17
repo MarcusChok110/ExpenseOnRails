@@ -114,6 +114,13 @@
 - `PUT /transactions/:id` — updates account info in the database
 - `DELETE /transactions/:id` — deletes transaction from the database
 
+## Authentication Endpoints (/auth)
+
+- `POST /register` — registers a new user and account in the database
+- `POST /login` — authenticate user and return a JWT
+- `DELETE /delete` — delete a user and their account from the database
+- `/ping` — ANY HTTP method/verb; used to test whether JWT token is valid and user is logged in
+
 ## Backend Dependencies
 
 ```
