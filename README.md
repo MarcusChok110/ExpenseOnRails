@@ -50,6 +50,70 @@
     "redux-undo": "^1.0.1"
 ```
 
+## Database Schemas (Models)
+
+### User
+
+```
+{
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  account: { type: Schema.Types.ObjectId, ref: 'Account', required: true },
+  firstName: { type: String },
+  lastName: { type: String },
+}
+```
+
+### Account
+
+```
+{
+  categories: { type: [String], required: true, default: defaultCategories },
+  balance: { type: Number, required: true, default: 0 },
+  budget: { type: Number, required: true, default: 0 },
+  expenses: { type: Number, required: true, default: 0 },
+  transactions: [
+    { type: Schema.Types.ObjectId, ref: 'Transaction', required: true },
+  ],
+  user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+}
+```
+
+### Transaction
+
+```
+{
+  account: { type: Schema.Types.ObjectId, ref: 'Account', required: true },
+  amount: { type: Number, required: true },
+  category: { type: String, required: true },
+  date: { type: Date, required: true },
+  description: { type: String },
+  title: { type: String, required: true },
+  type: { type: String, required: true, enum: ['expense', 'revenue'] },
+}
+```
+
+## API Endpoints (/api)
+
+### Users
+
+- `GET /users/` — returns a user based on Bearer token in Header
+- `GET /users/:id` — returns a user based on id
+- `PUT /users/:id` — updates a user in the database
+
+### Accounts
+
+- `GET /accounts/:id` — returns account info based on id
+- `PUT /accounts/:id` — updates account info in the database
+
+### Transactions
+
+- `GET /transactions/` — returns all transaction info for given user from Bearer token in Header
+- `POST /transactions/` — create a new transaction for the the current user in the database
+- `GET /transactions/:id` — returns single transaction info from id
+- `PUT /transactions/:id` — updates account info in the database
+- `DELETE /transactions/:id` — deletes transaction from the database
+
 ## Backend Dependencies
 
 ```
