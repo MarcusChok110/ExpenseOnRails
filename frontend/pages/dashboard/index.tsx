@@ -139,12 +139,6 @@ const Dashboard: React.FC = () => {
           type: "time",
           bounds: "data",
           distribution: "linear",
-          time: {
-            unit: "quarter",
-            displayFormats: {
-              quarter: "ll",
-            },
-          },
         },
       ],
     },
