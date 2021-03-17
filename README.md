@@ -36,7 +36,7 @@
 
 ## Frontend Dependencies
 
-```
+```json
     "@material-ui/core": "^4.11.3",
     "@material-ui/icons": "^4.11.2",
     "@reduxjs/toolkit": "^1.5.0",
@@ -54,7 +54,7 @@
 
 ### User
 
-```
+```TypeScript
 {
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
@@ -66,7 +66,7 @@
 
 ### Account
 
-```
+```TypeScript
 {
   categories: { type: [String], required: true, default: defaultCategories },
   balance: { type: Number, required: true, default: 0 },
@@ -81,7 +81,7 @@
 
 ### Transaction
 
-```
+```TypeScript
 {
   account: { type: Schema.Types.ObjectId, ref: 'Account', required: true },
   amount: { type: Number, required: true },
@@ -123,7 +123,7 @@
 
 ## Backend Dependencies
 
-```
+```json
     "bcryptjs": "^2.4.3",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.5",
@@ -169,3 +169,4 @@ JWT_SECRET=<YOUR_JWT_SECRET>
 - Implement undo / redo for redux state
 - Make more graphs in dashboard for separate expense / revenue transactions
 - Implement account balance value and create a graph for it
+- Add snackbars and loading circles for account page
