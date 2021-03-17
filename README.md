@@ -161,7 +161,7 @@ JWT_SECRET=<YOUR_JWT_SECRET>
 ```
 
 4. To run the application in development, cd back to the root directory and run the command `npm run dev` to run the app in development mode.
-5. To run the application in production, cd back to the root and run `npm run build` to compile the applications, and then run `npm start`.
+5. To run the application in production, cd back to the root directory and run `npm run build` to compile the applications, and then run `npm start`.
 6. The frontend should now be running on http://localhost:3000/ and the API on http://localhost:8000/!
 
 ## Todo
