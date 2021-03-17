@@ -77,6 +77,24 @@ Currently, the application is not deployed or hosted on the web. To use it, you 
 
 1. Download / clone the repository.
 2. cd to frontend and backend directories and run `npm install` to install the respective dependencies.
-3. To run the application in development, cd back to the root directory and run the command `npm run dev` to run the app in development mode.
-4. To run the application in production, run `npm run build` in the frontend and backend directories to compile the applications, and then cd back to the root directory and run `npm start`.
-5. The frontend should now be running on http://localhost:3000/ and the API on http://localhost:8000/!
+3. Create a MongoDB database and set up a .env file in the backend directory with the following values:
+
+```
+PORT=8000
+NODE_ENV=development
+MONGO_DB=<YOUR_MONGODB_DATABASE_URI>
+MONGO_USER=<YOUR_MONGODB_DATABASE_ADMIN_USERNAME>
+MONGO_PASSWORD=<YOUR_MONGODB_DATABASE_ADMIN_PASSWORD>
+MONGO_DBNAME=<YOUR_MONGODB_DATABASE_NAME>
+JWT_SECRET=<YOUR_JWT_SECRET>
+```
+
+4. To run the application in development, cd back to the root directory and run the command `npm run dev` to run the app in development mode.
+5. To run the application in production, cd back to the root and run `npm run build` to compile the applications, and then run `npm start`.
+6. The frontend should now be running on http://localhost:3000/ and the API on http://localhost:8000/!
+
+## Todo
+
+- Implement undo / redo for redux state
+- Make more graphs in dashboard for separate expense / revenue transactions
+- Implement account balance value and create a graph for it
