@@ -20,7 +20,7 @@ const Home: React.FC = () => {
         <ListItem>
           <ListItemText
             primary={"Home"}
-            secondary={"The page you are on now"}
+            secondary={"The page you are on now."}
           />
         </ListItem>
         <ListItem>
